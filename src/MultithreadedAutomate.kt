@@ -13,12 +13,15 @@ class MultithreadedAutomate: Thread{
 
     fun tryPath(): MutableList<AutState> {
         val states = startStates
-
-        while (!states.last().equals(finalState) && !states.last().equals(badState)) {
+        while (!states.last().equals(finalState) && !states.last().equals(badState) && !states.last().stack.equals("~~") && !states.last().inTape.equals("~~")) {
             val state = states.last()
             if (aut.P.contains(state.stack.last())) {
                 if (state.inTape.first().equals(state.stack.last())) {
                     states.add(transition2(state))
+                    if (states.last().stack.equals("h") && states.last().inTape.equals("~~")) {
+
+                        println("eq " + states.last().equals(Util.finalState))
+                    }
                 } else {
                     states.add(badState)
                 }
@@ -26,12 +29,9 @@ class MultithreadedAutomate: Thread{
                 states.add(transition1(state, states))
             }
         }
-        println("I am thread " + name)
-        println("Passing this list: \n" + states + "\n")
+        //println(" Thread " + this.name + " Passing this list: \n" + states + "\n")
         if (states.last().equals(Util.finalState)) {
-            println("\n\n+++++++POBEEEEDAAAA+++++++++\n\n")
             SynchList.addToFinishList(states)
-            println("+++ synchlist " + states)
         }
         return states
     }
@@ -66,16 +66,25 @@ class MultithreadedAutomate: Thread{
         return result;
     }
 
-    //TODO - сделать норм метод а не это все
+    /**
+     * Функцие выбора путей при недетрменированном правиле.
+     * При недетерменированном правиле для всех вариантов перехода (начиная со 2) создается новый отдельный поток,
+     * который ищет путь после выбора данного варианта перехода.
+     * Функция возвращает 1 вариант перехода, для поиска пути в данном потоке
+     *
+     * @param states - путь состояний автомата (в котором последнее состояние - состояние в котором правило недетерменировано)
+     * @param list - все варианты переходов
+     */
     fun getMultithreaded(list: List<String>, states: MutableList<AutState>): String {
-
-        var threadStates = mutableListOf<AutState>()
-        states.forEach { threadStates.add(it) }
-        var state = states.last();
-        var resultOutput = state.stack.dropLast(1) + list[1]
-        var result = AutState(state.state, state.inTape, resultOutput )
-        threadStates.add(result)
-        MultithreadedAutomate(aut, threadStates).start()
+        for (i in 1..list.lastIndex) {
+            var threadStates = mutableListOf<AutState>()
+            states.forEach { threadStates.add(it) }
+            var state = states.last()
+            var resultOutput = state.stack.dropLast(1) + list[i]
+            var result = AutState(state.state, state.inTape, resultOutput )
+            threadStates.add(result)
+            MultithreadedAutomate(aut, threadStates).start()
+        }
         return list.get(0)
     }
 

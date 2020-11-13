@@ -15,6 +15,6 @@ object SynchList {
 
     @Synchronized
     fun foundFinish(): Boolean {
-        return finishList.size == 1
+        return finishList.size > 0
     }
 }

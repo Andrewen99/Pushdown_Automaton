@@ -1,7 +1,8 @@
 fun main() {
-    val automate = FileParser.parseFileToAutomate("/Users/andrewshakirov/Documents/шкалка/4 курс/ТАЯК/Laba3/test.txt")
+    val automate = FileParser.parseFileToAutomate("files/test.txt")
 
     val multithreadedAutomate = MultithreadedAutomate(automate, mutableListOf(AutState(inTape = "a+a*a", stack = "hE")))
+    //val multithreadedAutomate = MultithreadedAutomate(automate, mutableListOf(AutState(inTape = "ab", stack = "hE")))
     multithreadedAutomate.start()
     var time = 0;
     while (!SynchList.foundFinish() && time < 100) {
@@ -10,8 +11,13 @@ fun main() {
     }
     if (SynchList.foundFinish()) {
         println("Финальный путь найден: ")
-        SynchList.finishList.flatten().forEach {
-            println(it)
+        SynchList.finishList.forEach {
+            println("\n Путь: \n------------")
+            it.forEach {
+                println(it)
+            }
+            println("--------")
         }
     }
+
 }
