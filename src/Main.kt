@@ -20,4 +20,10 @@ fun main() {
         }
     }
 
+
+    println("Все пути")
+    SynchList.list.forEach {
+        println(it)
+    }
+
 }

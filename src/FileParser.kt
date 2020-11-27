@@ -8,10 +8,10 @@ object FileParser {
             automate.rawLines.add(line)
             createRule1(line, automate)
         }
-        println("rules " + automate.rules1)
-        println("raw lines " + automate.rawLines)
         automate.fillP()
         automate.createRules2()
+        println("rules " + automate.rules1 + "\n" + automate.rules2)
+        println("raw lines " + automate.rawLines)
         return automate
     }
 
